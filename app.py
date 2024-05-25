@@ -1,6 +1,5 @@
 import os
 
-from pathlib import Path
 from matplotlib import pyplot as plt
 import requests
 from bs4 import BeautifulSoup
@@ -16,8 +15,6 @@ from flask import (Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 
 app = Flask(__name__)
-
-app_dir = Path(__file__).parent
 
 @app.route('/')
 def index():
