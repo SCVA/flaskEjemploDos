@@ -1,7 +1,6 @@
 Flask
 matplotlib
 pandas
-pathlib
 joblib
 scikit-learn
 requests
