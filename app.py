@@ -73,4 +73,4 @@ def prueba():
     return f"<img src='data:image/png;base64,{data}'/>"
 
 if __name__ == '__main__':
-   app.run()
+   app.run(host='0.0.0.0', port=80)
