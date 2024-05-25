@@ -1,8 +1,12 @@
 import os
 
 from pathlib import Path
+from matplotlib import pyplot as plt
+import requests
+from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
+from joblib import load
 
 import base64
 from io import BytesIO
@@ -37,27 +41,31 @@ def hello():
        return redirect(url_for('index'))
 
 def obtenerScraping():
-    Xt = pd.read_csv(app_dir / "DatosScrapping.csv")
-    Xt = Xt.to_numpy()
-    Xt = Xt[:, np.newaxis, 1]
-    return Xt
+    url = "https://www.scimagojr.com/journalrank.php?page=2&total_size=29165"
+    req = requests.get(url)
+    if(req.status_code==200):
+      soup = BeautifulSoup(req.text)
+      data = soup.find_all("table")[0]
+    dataset = pd.read_html(str(data))[0]
+    X = dataset['H index'];
+    X= X.to_numpy()
+    X = X[:, np.newaxis]
+    return X
 
 @app.route("/prueba")
 def prueba():
-
-    Xt = obtenerScraping()
-
+    X = obtenerScraping()
     """
     Cargar mi modelo
     """
-    from joblib import load
-    with open(app_dir / "modelo_entrenado.pkl", "rb") as f:
+    with open("model.pkl", "rb") as f:
         reg = load(f)
     """
     Utilizar mi modelo
     """
-    result = reg.predict(Xt)
+    result = reg.predict(X)
     resultDF = pd.DataFrame(result,columns=['variable'])
+    resultDF["variable"].plot()
     
     # Generate the figure **without using pyplot**.
     fig = Figure()
